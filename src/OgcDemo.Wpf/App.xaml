@@ -1,0 +1,6 @@
+<Application x:Class="OgcDemo.Wpf.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Application.Resources>
+    <Style TargetType="Button"><Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="3"/></Style>
+    <Style TargetType="TextBlock"><Setter Property="Foreground" Value="#18374A"/></Style>
+  </Application.Resources>
+</Application>

@@ -1,0 +1,8 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Training site A", "kind": "Synthetic point", "note": "Invented data, not a real facility" }, "geometry": { "type": "Point", "coordinates": [34.91, 32.17] } },
+    { "type": "Feature", "properties": { "name": "Training corridor", "kind": "Synthetic line" }, "geometry": { "type": "LineString", "coordinates": [[34.74, 31.98], [34.82, 32.00], [34.88, 31.97]] } },
+    { "type": "Feature", "properties": { "name": "Training district", "kind": "Synthetic polygon with a hole" }, "geometry": { "type": "Polygon", "coordinates": [[[34.95,31.96],[35.03,31.96],[35.03,32.04],[34.95,32.04],[34.95,31.96]], [[34.97,31.98],[34.97,32.00],[34.99,32.00],[34.99,31.98],[34.97,31.98]]] } }
+  ]
+}

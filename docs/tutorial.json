@@ -1,0 +1,106 @@
+[
+  {
+    "title": "01 \u2014 Understand the architecture and prepare the workstation",
+    "template": "docs/templates/01-foundations.md",
+    "output": "docs/chapters/01-foundations.md",
+    "sources": [
+      "global.json",
+      "Directory.Build.props",
+      "OgcDemo.slnx"
+    ]
+  },
+  {
+    "title": "02 \u2014 Restore, build, and launch",
+    "template": "docs/templates/02-build.md",
+    "output": "docs/chapters/02-build.md",
+    "sources": [
+      "NuGet.Config",
+      "src/OgcDemo.Core/OgcDemo.Core.csproj",
+      "src/OgcDemo.Wpf/OgcDemo.Wpf.csproj"
+    ]
+  },
+  {
+    "title": "03 \u2014 Compose the application with MVVM, DI, and logging",
+    "template": "docs/templates/03-application.md",
+    "output": "docs/chapters/03-application.md",
+    "sources": [
+      "src/OgcDemo.Wpf/App.xaml",
+      "src/OgcDemo.Wpf/App.xaml.cs",
+      "src/OgcDemo.Wpf/MainWindow.xaml",
+      "src/OgcDemo.Wpf/MainWindow.xaml.cs",
+      "src/OgcDemo.Wpf/MainViewModel.cs",
+      "src/OgcDemo.Core/FileLogger.cs"
+    ]
+  },
+  {
+    "title": "04 \u2014 Navigate and transform coordinates",
+    "template": "docs/templates/04-coordinates.md",
+    "output": "docs/chapters/04-coordinates.md",
+    "sources": [
+      "src/OgcDemo.Core/Coordinates.cs"
+    ]
+  },
+  {
+    "title": "05 \u2014 Build graphics overlays and load GeoJSON",
+    "template": "docs/templates/05-local-features.md",
+    "output": "docs/chapters/05-local-features.md",
+    "sources": [
+      "src/OgcDemo.Core/FeatureLayers.cs",
+      "samples/sites.geojson"
+    ]
+  },
+  {
+    "title": "06 \u2014 Manage layers, select features, and highlight geometry",
+    "template": "docs/templates/06-layers-selection.md",
+    "output": "docs/chapters/06-layers-selection.md",
+    "sources": [
+      "src/OgcDemo.Wpf/LayerEntry.cs",
+      "src/OgcDemo.Core/LatestRequest.cs"
+    ]
+  },
+  {
+    "title": "07 \u2014 Connect WMS and identify map images",
+    "template": "docs/templates/07-wms.md",
+    "output": "docs/chapters/07-wms.md",
+    "sources": [
+      "src/OgcDemo.Core/OgcLayers.cs"
+    ]
+  },
+  {
+    "title": "08 \u2014 Select a WMTS tile matrix set",
+    "template": "docs/templates/08-wmts.md",
+    "output": "docs/chapters/08-wmts.md",
+    "sources": [
+      "src/OgcDemo.Core/OgcLayers.cs"
+    ]
+  },
+  {
+    "title": "09 \u2014 Retrieve WFS features within the current view",
+    "template": "docs/templates/09-wfs.md",
+    "output": "docs/chapters/09-wfs.md",
+    "sources": [
+      "src/OgcDemo.Core/WfsClient.cs",
+      "src/OgcDemo.Core/GmlFeatures.cs"
+    ]
+  },
+  {
+    "title": "10 \u2014 Authenticate, diagnose failures, and tune performance",
+    "template": "docs/templates/10-failures.md",
+    "output": "docs/chapters/10-failures.md",
+    "sources": [
+      "src/OgcDemo.Core/Configuration.cs",
+      "src/OgcDemo.Core/OgcTransport.cs",
+      "src/OgcDemo.Wpf/appsettings.json"
+    ]
+  },
+  {
+    "title": "11 \u2014 Validate and publish a Windows desktop build",
+    "template": "docs/templates/11-deployment.md",
+    "output": "docs/chapters/11-deployment.md",
+    "sources": [
+      "scripts/Build.ps1",
+      "scripts/Test-Desktop.ps1",
+      "src/OgcDemo.Wpf/DesktopSmoke.cs"
+    ]
+  }
+]
