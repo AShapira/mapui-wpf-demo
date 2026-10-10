@@ -80,6 +80,7 @@ Success means `dotnet --info` identifies Windows x64 and a .NET 10 SDK. If SDK r
 ``````xml
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/HelloMap.Wpf/HelloMap.Wpf.csproj" />
     <Project Path="src/OgcDemo.Core/OgcDemo.Core.csproj" />
     <Project Path="src/OgcDemo.Wpf/OgcDemo.Wpf.csproj" />
   </Folder>

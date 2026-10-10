@@ -4,6 +4,21 @@ A documented .NET 10 WPF GIS application for an air-gapped Windows workstation w
 
 **Start reading:** [Complete build guide](docs/BUILD-GUIDE.md). For shorter reading sessions use [lesson 01](docs/chapters/01-foundations.md). Local coding models should start with [LLM context](LLM_CONTEXT.md).
 
+## Hello World: just a map
+
+For the smallest example, open [HelloMap.Wpf](src/HelloMap.Wpf/HelloMap.Wpf.csproj). It is a separate WPF app with one map control, one WMS basemap, and one in-memory polyline layer. Four white circles mark the line's vertices. All map setup is in [MainWindow.xaml.cs](src/HelloMap.Wpf/MainWindow.xaml.cs); there is no view model, DI, or configuration framework. See the [Hello World README](src/HelloMap.Wpf/README.md) for setup and an explanation of its NuGet dependencies.
+
+1. In `src/HelloMap.Wpf/MainWindow.xaml.cs`, replace `WmsUrl` and `WmsLayer` with your internal WMS endpoint and advertised layer name. The checked-in URL is a placeholder. This minimal example uses anonymous WMS 1.3.0 with `EPSG:3857` and `image/png`.
+2. Edit the four `(longitude, latitude)` pairs if your basemap covers another area; the example line is near Tel Aviv. The code projects them to Web Mercator and zooms to the line.
+3. Configure `NuGet.local.Config` as described below, then run on Windows:
+
+```powershell
+dotnet restore src/HelloMap.Wpf --configfile NuGet.local.Config --locked-mode
+dotnet run --project src/HelloMap.Wpf --no-restore
+```
+
+Drag to pan and use the mouse wheel to zoom. The polyline appears immediately; the basemap loads asynchronously. If the WMS capabilities request fails, a message explains the failure and the polyline remains usable. A configured, reachable service covering the vertices is required to see the basemap. Use the full app below for authentication and other OGC features.
+
 ## Run on Windows
 
 Use Windows PowerShell in a Windows-local copy of the project. Install your organization's .NET 10 SDK through its approved software channel first.

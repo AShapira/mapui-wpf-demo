@@ -101,11 +101,12 @@ Source SHA-256: `0946a4d07943c76765582df27b5c1eb5d3714e7b8681bbd7328550fa3146afd
 
 ### `OgcDemo.slnx`
 
-Source SHA-256: `a7a413156580888833d42e9695b95ebc361edf9d6a8472f2335eb32801593820`
+Source SHA-256: `907afeed0b4052a297fb41928838f30eebe193b3f1afa1932f27575316f4b43c`
 
 ``````xml
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/HelloMap.Wpf/HelloMap.Wpf.csproj" />
     <Project Path="src/OgcDemo.Core/OgcDemo.Core.csproj" />
     <Project Path="src/OgcDemo.Wpf/OgcDemo.Wpf.csproj" />
   </Folder>
@@ -1754,6 +1755,21 @@ A documented .NET 10 WPF GIS application for an air-gapped Windows workstation w
 
 **Start reading:** [Complete build guide](#contents). For shorter reading sessions use [lesson 01](#file-docs-chapters-01-foundations-md). Local coding models should start with [LLM context](#file-llm-context-md).
 
+## Hello World: just a map
+
+For the smallest example, open [HelloMap.Wpf](#file-src-hellomap-wpf-hellomap-wpf-csproj). It is a separate WPF app with one map control, one WMS basemap, and one in-memory polyline layer. Four white circles mark the line's vertices. All map setup is in [MainWindow.xaml.cs](#file-src-hellomap-wpf-mainwindow-xaml-cs); there is no view model, DI, or configuration framework. See the [Hello World README](#file-src-hellomap-wpf-readme-md) for setup and an explanation of its NuGet dependencies.
+
+1. In `src/HelloMap.Wpf/MainWindow.xaml.cs`, replace `WmsUrl` and `WmsLayer` with your internal WMS endpoint and advertised layer name. The checked-in URL is a placeholder. This minimal example uses anonymous WMS 1.3.0 with `EPSG:3857` and `image/png`.
+2. Edit the four `(longitude, latitude)` pairs if your basemap covers another area; the example line is near Tel Aviv. The code projects them to Web Mercator and zooms to the line.
+3. Configure `NuGet.local.Config` as described below, then run on Windows:
+
+```powershell
+dotnet restore src/HelloMap.Wpf --configfile NuGet.local.Config --locked-mode
+dotnet run --project src/HelloMap.Wpf --no-restore
+```
+
+Drag to pan and use the mouse wheel to zoom. The polyline appears immediately; the basemap loads asynchronously. If the WMS capabilities request fails, a message explains the failure and the polyline remains usable. A configured, reachable service covering the vertices is required to see the basemap. Use the full app below for authentication and other OGC features.
+
 ## Run on Windows
 
 Use Windows PowerShell in a Windows-local copy of the project. Install your organization's .NET 10 SDK through its approved software channel first.
@@ -2170,7 +2186,7 @@ After code changes regenerate the guide, build, and run relevant tests. Describe
 
 ### `README.md`
 
-Source SHA-256: `a85737d4b917925f76f69e24a977802f5ba89fbaf09b274633fa99d09a2f6058`
+Source SHA-256: `caa0d6c7743b4da7d6798803d92a5ab94762ba2ebbf5d435d4744190d5db9fc0`
 
 ``````text
 # Mapsui OGC Desktop Lab
@@ -2178,6 +2194,21 @@ Source SHA-256: `a85737d4b917925f76f69e24a977802f5ba89fbaf09b274633fa99d09a2f605
 A documented .NET 10 WPF GIS application for an air-gapped Windows workstation with internal Artifactory and existing OGC services. Start with invented local features, then connect WMS, WMTS, and WFS. No public basemap, database, or server installation is required.
 
 **Start reading:** [Complete build guide](docs/BUILD-GUIDE.md). For shorter reading sessions use [lesson 01](docs/chapters/01-foundations.md). Local coding models should start with [LLM context](LLM_CONTEXT.md).
+
+## Hello World: just a map
+
+For the smallest example, open [HelloMap.Wpf](src/HelloMap.Wpf/HelloMap.Wpf.csproj). It is a separate WPF app with one map control, one WMS basemap, and one in-memory polyline layer. Four white circles mark the line's vertices. All map setup is in [MainWindow.xaml.cs](src/HelloMap.Wpf/MainWindow.xaml.cs); there is no view model, DI, or configuration framework. See the [Hello World README](src/HelloMap.Wpf/README.md) for setup and an explanation of its NuGet dependencies.
+
+1. In `src/HelloMap.Wpf/MainWindow.xaml.cs`, replace `WmsUrl` and `WmsLayer` with your internal WMS endpoint and advertised layer name. The checked-in URL is a placeholder. This minimal example uses anonymous WMS 1.3.0 with `EPSG:3857` and `image/png`.
+2. Edit the four `(longitude, latitude)` pairs if your basemap covers another area; the example line is near Tel Aviv. The code projects them to Web Mercator and zooms to the line.
+3. Configure `NuGet.local.Config` as described below, then run on Windows:
+
+```powershell
+dotnet restore src/HelloMap.Wpf --configfile NuGet.local.Config --locked-mode
+dotnet run --project src/HelloMap.Wpf --no-restore
+```
+
+Drag to pan and use the mouse wheel to zoom. The polyline appears immediately; the basemap loads asynchronously. If the WMS capabilities request fails, a message explains the failure and the polyline remains usable. A configured, reachable service covering the vertices is required to see the basemap. Use the full app below for authentication and other OGC features.
 
 ## Run on Windows
 
@@ -3130,6 +3161,544 @@ The desktop smoke check creates a real WPF window. It verifies rendered point pi
 - **Self-contained publishing: documented option, not the validated output.** The verified package is framework-dependent and needs the .NET 10 Desktop Runtime. Installers, signing, enterprise authentication beyond Basic, and production performance qualification remain extensions.
 
 No work-server state was changed. Temporary build tools, binaries, logs, and reports are ignored by source control. Real credentials and private settings are not included in the project or generated manual.
+``````
+
+<a id="file-src-hellomap-wpf-app-xaml"></a>
+
+### `src/HelloMap.Wpf/App.xaml`
+
+Source SHA-256: `f75907c699e27890c8cd73b78998cadf803b98780ebd77aad35bb3ca38d317a2`
+
+``````xml
+<Application x:Class="HelloMap.Wpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml" />
+``````
+
+<a id="file-src-hellomap-wpf-app-xaml-cs"></a>
+
+### `src/HelloMap.Wpf/App.xaml.cs`
+
+Source SHA-256: `cf65f977536fd847e609c902d06a083e82db5a46358de41725c7b6b9dd277423`
+
+``````csharp
+using System.Windows;
+
+namespace HelloMap.Wpf;
+
+public partial class App : Application { }
+``````
+
+<a id="file-src-hellomap-wpf-hellomap-wpf-csproj"></a>
+
+### `src/HelloMap.Wpf/HelloMap.Wpf.csproj`
+
+Source SHA-256: `582a2ca7a6883d86ef41e0cfa4e5ef24255ad229da637742a95170ac889d088b`
+
+``````xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Mapsui.Wpf" Version="5.1.0" />
+    <PackageReference Include="Mapsui.Nts" Version="5.1.0" />
+  </ItemGroup>
+</Project>
+``````
+
+<a id="file-src-hellomap-wpf-mainwindow-xaml"></a>
+
+### `src/HelloMap.Wpf/MainWindow.xaml`
+
+Source SHA-256: `f6a940be0a20e70e73aca8d4e869c4bab733fd4a4d5b0fb1d1fee2ce00263fa5`
+
+``````xml
+<Window x:Class="HelloMap.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mapsui="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf"
+        Title="Hello Map" Width="900" Height="600" Loaded="WindowLoaded">
+    <mapsui:MapControl x:Name="MapView" />
+</Window>
+``````
+
+<a id="file-src-hellomap-wpf-mainwindow-xaml-cs"></a>
+
+### `src/HelloMap.Wpf/MainWindow.xaml.cs`
+
+Source SHA-256: `c495cd21a683536b10f69e93efe75f8b44e1f3d94d982650737d6ff3d5165141`
+
+``````csharp
+using System.Windows;
+using Mapsui;
+using Mapsui.Layers;
+using Mapsui.Nts;
+using Mapsui.Projections;
+using Mapsui.Providers.Wms;
+using Mapsui.Styles;
+using NetTopologySuite.Geometries;
+
+namespace HelloMap.Wpf;
+
+public partial class MainWindow : Window
+{
+    // Change these two values to your WMS endpoint and advertised layer name.
+    private const string WmsUrl = "https://ogc.example.invalid/wms";
+    private const string WmsLayer = "demo:basemap";
+    private readonly ImageLayer _basemap = new("WMS basemap");
+
+    public MainWindow()
+    {
+        InitializeComponent();
+
+        // Longitude/latitude vertices near Tel Aviv, projected to the map's CRS.
+        var vertices = new[] { (34.78, 32.03), (34.82, 32.08), (34.87, 32.05), (34.92, 32.10) }
+            .Select(vertex =>
+            {
+                var (x, y) = SphericalMercator.FromLonLat(vertex.Item1, vertex.Item2);
+                return new Coordinate(x, y);
+            }).ToArray();
+
+        var line = new GeometryFeature { Geometry = new LineString(vertices) };
+        var overlay = new MemoryLayer("Polyline with vertices")
+        {
+            Features = new[] { line },
+            Style = new StyleCollection
+            {
+                Styles =
+                {
+                    new VectorStyle { Line = new Pen(Color.Red, 3) },
+                    // SymbolStyle draws a circle at each vertex of the same geometry.
+                    new SymbolStyle { Fill = new Brush(Color.White), Outline = new Pen(Color.Red, 2), SymbolScale = 0.5 }
+                }
+            }
+        };
+
+        var map = new Map { CRS = "EPSG:3857" };
+        map.Layers.Add(_basemap); // First layer is underneath.
+        map.Layers.Add(overlay);
+        map.Navigator.ZoomToBox(overlay.Extent!.Grow(2000));
+        MapView.Map = map;
+        Closed += (_, _) => MapView.Dispose();
+    }
+
+    private async void WindowLoaded(object sender, RoutedEventArgs e)
+    {
+        Loaded -= WindowLoaded;
+        try
+        {
+            var wms = await WmsProvider.CreateAsync(WmsUrl, "1.3.0");
+            wms.CRS = "EPSG:3857";
+            wms.AddLayer(WmsLayer);
+            wms.SetImageFormat("image/png");
+            if (!IsLoaded) return;
+            _basemap.DataSource = wms;
+            MapView.RefreshData();
+        }
+        catch (Exception ex)
+        {
+            if (IsLoaded)
+                MessageBox.Show(this, "Could not load the WMS basemap. Check WmsUrl and WmsLayer.\n" + ex.Message, "Hello Map");
+        }
+    }
+}
+``````
+
+<a id="file-src-hellomap-wpf-readme-md"></a>
+
+### `src/HelloMap.Wpf/README.md`
+
+Source SHA-256: `8e4e838aec70b5990610208fe16737a46cf7b2ee5eb6ab3a702f671210e4b8f1`
+
+``````text
+# Hello Map: a minimal WPF demo
+
+One window, one Mapsui map control, one WMS basemap, and one polyline layer with four visible vertex markers. Map setup lives in [MainWindow.xaml.cs](MainWindow.xaml.cs); the window layout is [MainWindow.xaml](MainWindow.xaml). This example uses ordinary code-behind, without MVVM, dependency injection, or a configuration framework.
+
+## Configure and run
+
+Use Windows with the .NET 10 SDK. Run the commands below from the **repository root**; the project also uses the root `global.json` and `Directory.Build.props`.
+
+1. In `MainWindow.xaml.cs`, replace `WmsUrl` and `WmsLayer` with your internal WMS endpoint and its advertised layer name. The checked-in URL is a placeholder. The service must support anonymous WMS 1.3.0, `EPSG:3857`, and `image/png`.
+2. The four `(longitude, latitude)` pairs describe a line near Tel Aviv. Change them if your service covers another area. The app projects them to Web Mercator and zooms to the line.
+3. If you have not already configured a private NuGet feed, copy and edit the root configuration:
+
+```powershell
+Copy-Item NuGet.Config NuGet.local.Config
+notepad NuGet.local.Config
+# Replace the example Artifactory URL with your internal NuGet v3 feed.
+```
+
+Restore and run:
+
+```powershell
+dotnet restore src/HelloMap.Wpf --configfile NuGet.local.Config --locked-mode
+dotnet run --project src/HelloMap.Wpf --no-restore
+```
+
+Drag to pan; use the mouse wheel to zoom. The red polyline and white vertex circles appear immediately. The WMS basemap loads asynchronously underneath them. If loading WMS capabilities fails, the app displays an error and keeps the polyline usable. Seeing the basemap requires a reachable service with data covering the line.
+
+## Why does such a small demo have 36 NuGet packages?
+
+The [project file](HelloMap.Wpf.csproj) declares only **two direct package references**, both version **5.1.0**:
+
+| Direct package | What this demo uses |
+| --- | --- |
+| `Mapsui.Wpf` | The WPF `MapControl` and its mapping/rendering dependencies. |
+| `Mapsui.Nts` | `GeometryFeature`, which connects a NetTopologySuite `LineString` to a Mapsui layer. |
+
+Those libraries declare their own dependencies. NuGet follows those declarations recursively, producing **34 transitive packages**, for **36 packages total** in the current [packages.lock.json](packages.lock.json). These counts describe this checked-in version and target framework; upgrades can change them.
+
+“Direct” means explicitly listed in the project file, not “called by our code.” For example, this code uses types from `Mapsui` and `NetTopologySuite`, although both arrive transitively. `Mapsui.Nts` also arrives through `Mapsui.Rendering.Skia`; its explicit reference documents this demo's geometry dependency. Removing that reference alone would not remove it from the dependency tree.
+
+| Transitive package or family | Why it appears |
+| --- | --- |
+| `Mapsui`, `NetTopologySuite` | Map, WMS provider, layers, styling, projection, and line/coordinate types used by the demo. |
+| `Mapsui.Rendering.Skia`, `SkiaSharp`, `SkiaSharp.Views.WPF`, `SkiaSharp.Views.Desktop.Common` | Mapsui's drawing engine and WPF integration. |
+| `Mapsui.Tiling`, `BruTile` | Tiling support included by `Mapsui.Wpf`. This demo uses an untiled WMS `ImageLayer`. |
+| `NetTopologySuite.IO.GeoJSON4STJ`, `NetTopologySuite.Features` | GeoJSON/feature support included upstream. This demo constructs its line in code and does not read GeoJSON. |
+| `Svg.Skia`, `Svg.Model`, `Svg.Custom`, `ShimSkiaSharp`, `ExCSS` | SVG and styling support included by the rendering stack. The demo supplies no custom SVG assets. |
+| `HarfBuzzSharp`, `SkiaSharp.HarfBuzz`, `Topten.RichTextKit` | Text shaping and rich-text support included by the rendering stack. |
+| `OpenTK`, `OpenTK.GLWpfControl`, and the other `OpenTK.*` packages | Dependencies brought in through `SkiaSharp.Views.WPF`. The OpenTK dependency tree includes graphics, input, windowing, compute, and audio components; the demo itself does not use audio or compute APIs. |
+| `SkiaSharp.NativeAssets.*`, `HarfBuzzSharp.NativeAssets.*` | Platform-specific native binaries declared upstream. Linux entries can appear in this Windows project's lock file; Linux native libraries do not execute on Windows. |
+
+The lock file records the **resolved dependency graph**, including versions and package hashes. It is not a trace of code executed at runtime, nor a list of files necessarily loaded by Windows. Asset selection depends on the target framework and runtime; rendering may also use library features internally.
+
+## Restoring in an air-gapped environment
+
+Your internal feed or prepared NuGet cache must provide the complete resolved package graph, including transitive packages. Mirroring only `Mapsui.Wpf` and `Mapsui.Nts` is insufficient. Windows/.NET targeting packs must also be available as required by the installed SDK; the lock file is not a complete offline SDK installation manifest.
+
+Keep `packages.lock.json` under source control. `--locked-mode` checks that restore agrees with the committed dependency graph. Do not delete entries by hand to make the list shorter: upstream dependencies still request those packages. To change dependencies, edit package references deliberately, restore to regenerate the lock file, then review and validate the result.
+
+Inspect the resolved package list after restoring, from the repository root:
+
+```powershell
+dotnet list src/HelloMap.Wpf/HelloMap.Wpf.csproj package --include-transitive --no-restore
+```
+
+For authentication, other OGC protocols, and layer controls, see the [full application README](../../README.md).
+``````
+
+<a id="file-src-hellomap-wpf-packages-lock-json"></a>
+
+### `src/HelloMap.Wpf/packages.lock.json`
+
+Source SHA-256: `d59b90648f441f7c8da7c5baf297b335ce81d1a9cd8ea061daf5622a661b3dc8`
+
+``````json
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0-windows10.0.19041": {
+      "Mapsui.Nts": {
+        "type": "Direct",
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "NmiGmHGickhrAPTi7fVncP0+Cr/jISJSaKWF55QTL5OtbJuVcwQZDzWlpC6vyucEVlGCV5MM1pQYsKOLLAdjCg==",
+        "dependencies": {
+          "Mapsui": "5.1.0",
+          "NetTopologySuite": "2.6.0",
+          "NetTopologySuite.IO.GeoJSON4STJ": "[4.0.0, 5.0.0)"
+        }
+      },
+      "Mapsui.Wpf": {
+        "type": "Direct",
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "U9WPRIWJMaI0hRNUHXnr5x6Bkrm1HbpL8Tqej2CuloYD0qlOM2OfxOhsBwmaFJQDMi+uvyg4DyozfWMSZrh9Xw==",
+        "dependencies": {
+          "BruTile": "[6.0.0, 7.0.0)",
+          "HarfBuzzSharp": "8.3.1.3",
+          "Mapsui": "5.1.0",
+          "Mapsui.Rendering.Skia": "5.1.0",
+          "Mapsui.Tiling": "5.1.0",
+          "NetTopologySuite": "2.6.0",
+          "NetTopologySuite.IO.GeoJSON4STJ": "[4.0.0, 5.0.0)",
+          "SkiaSharp": "3.119.2",
+          "SkiaSharp.HarfBuzz": "3.119.2",
+          "SkiaSharp.NativeAssets.Linux": "3.119.2",
+          "SkiaSharp.Views.WPF": "3.119.2",
+          "Svg.Skia": "3.2.1",
+          "Topten.RichTextKit": "0.4.167"
+        }
+      },
+      "BruTile": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "AwDEphrbCWm+7gywShqyDPXB8Bc//kRJ4z49BLgIihnWkubHRbZGy+RGgq/+MYm1fkReiVZXDfcF9pgvQScb3Q=="
+      },
+      "ExCSS": {
+        "type": "Transitive",
+        "resolved": "4.3.1",
+        "contentHash": "A8UtcghHQlWxPJhJF5bsfEYO7068JHGTuJ7tzyyMjd5fE/N/xY1cVOUhzuLLFwMOCJVnM4mqSQc93W9fGfZ1kA=="
+      },
+      "HarfBuzzSharp": {
+        "type": "Transitive",
+        "resolved": "8.3.1.3",
+        "contentHash": "NGZ2+ZVNPM+NdHB/asW0/ykWngyHWwcqjrbN2nDeH1B/aptPGlCUl8wkQ2cSJxw5fdWgdmIPmNuTPWpLwNVXWg==",
+        "dependencies": {
+          "HarfBuzzSharp.NativeAssets.Win32": "8.3.1.3"
+        }
+      },
+      "HarfBuzzSharp.NativeAssets.Linux": {
+        "type": "Transitive",
+        "resolved": "2.8.2.3",
+        "contentHash": "Qu1yJSHEN7PD3+fqfkaClnORWN5e2xJ2Xoziz/GUi/oBT1Z+Dp2oZeiONKP6NFltboSOBkvH90QuOA6YN/U1zg==",
+        "dependencies": {
+          "HarfBuzzSharp": "2.8.2.3"
+        }
+      },
+      "HarfBuzzSharp.NativeAssets.Win32": {
+        "type": "Transitive",
+        "resolved": "8.3.1.3",
+        "contentHash": "bx8CE8Js+XGX8PUxAHCBDEORt5aaBYtMN4Hr9QFs57Xithh6yjUyYqksizH6eRDhJkwsGI+SXWmPmMm8lZC9Pw=="
+      },
+      "Mapsui": {
+        "type": "Transitive",
+        "resolved": "5.1.0",
+        "contentHash": "uruvNpGyYq+nKdoi27zqOlAfohFShV+c1wDExbdMKGL8I4P7xHc+LeidKaE7WHAgqJSkgY9qWMnl8re5dd0ZTQ=="
+      },
+      "Mapsui.Rendering.Skia": {
+        "type": "Transitive",
+        "resolved": "5.1.0",
+        "contentHash": "SDukkZXbsFQhgn3SKupjG0MFGlVU1flwT/94Wnxh+si5SaPqhkOtns9Ny+fMGseH8D+CBVHnD9B7NOKiOkSVOw==",
+        "dependencies": {
+          "HarfBuzzSharp": "8.3.1.3",
+          "Mapsui": "5.1.0",
+          "Mapsui.Nts": "5.1.0",
+          "NetTopologySuite": "2.6.0",
+          "NetTopologySuite.IO.GeoJSON4STJ": "[4.0.0, 5.0.0)",
+          "SkiaSharp": "3.119.2",
+          "SkiaSharp.HarfBuzz": "3.119.2",
+          "SkiaSharp.NativeAssets.Linux": "3.119.2",
+          "Svg.Skia": "3.2.1",
+          "Topten.RichTextKit": "0.4.167"
+        }
+      },
+      "Mapsui.Tiling": {
+        "type": "Transitive",
+        "resolved": "5.1.0",
+        "contentHash": "7AWSEnDY4AtpiCiedfzt4+BeJ7VGsLEiDDhAcAr/jYNuKx7Bv2kimFqjIIZZJH+Vli2pGw+Smuwi4k0dNnJJig==",
+        "dependencies": {
+          "BruTile": "[6.0.0, 7.0.0)",
+          "Mapsui": "5.1.0"
+        }
+      },
+      "NetTopologySuite": {
+        "type": "Transitive",
+        "resolved": "2.6.0",
+        "contentHash": "1B1OTacTd4QtFyBeuIOcThwSSLUdRZU3bSFIwM8vk36XiZlBMi3K36u74e4OqwwHRHUuJC1PhbDx4hyI266X1Q=="
+      },
+      "NetTopologySuite.Features": {
+        "type": "Transitive",
+        "resolved": "2.1.0",
+        "contentHash": "Iq+Ie9WZJj8Pyu3asHZ/UwZLim786QzWC0DmLEzFK2u3BeLHDK7iWfsYBLDb/RCBUql8VBmW6LMlsJ+LKUHduA==",
+        "dependencies": {
+          "NetTopologySuite": "[2.0.0, 3.0.0-A)"
+        }
+      },
+      "NetTopologySuite.IO.GeoJSON4STJ": {
+        "type": "Transitive",
+        "resolved": "4.0.0",
+        "contentHash": "Jdm9qBVDcHkrVn3fm3knw6pGu3Ggn31tGVRyIP1/5HSL+8EDPfUnEZF0+oVFBkOKR9tqu9aV2jmEX42Kq8F2Yw==",
+        "dependencies": {
+          "NetTopologySuite": "[2.0.0, 3.0.0-A)",
+          "NetTopologySuite.Features": "[2.1.0, 3.0.0-A)"
+        }
+      },
+      "OpenTK": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "w2oiuLDpZbSCyqzHEFFLTO6JMNadHWS6Pp68U68lfzdTrzTQQqyH7x+/PJidsk+wRSDopaH9e03/KzYB9Fs+7Q==",
+        "dependencies": {
+          "OpenTK.Compute": "4.3.0",
+          "OpenTK.Core": "4.3.0",
+          "OpenTK.Graphics": "4.3.0",
+          "OpenTK.Input": "4.3.0",
+          "OpenTK.Mathematics": "4.3.0",
+          "OpenTK.OpenAL": "4.3.0",
+          "OpenTK.Windowing.Common": "4.3.0",
+          "OpenTK.Windowing.Desktop": "4.3.0",
+          "OpenTK.Windowing.GraphicsLibraryFramework": "4.3.0"
+        }
+      },
+      "OpenTK.Compute": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "XrMVjBPp1PNuz7z7hdNyO2oBsAPZHcHzILs7ewtEP09CM1KPVwZDAsIjOjEJesLCWrNr+jm6+3TvHActYkk4lQ=="
+      },
+      "OpenTK.Core": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "Hu+4U+tvnQW++y8Gj4OggLVuhclLm1hVN9ZIc3e9d8uo15CWYOSycw+FQhaRH3aibFv1vFYgH+bMIHM509YwYg=="
+      },
+      "OpenTK.GLWpfControl": {
+        "type": "Transitive",
+        "resolved": "4.2.3",
+        "contentHash": "VIq15MqeMB42v7cuoPcbHAFzdlOcN5DZEhguuQVdvZP0NlfajjaoVDqtP3koOWLs1how2YqCaVk1qIvsuRdQqQ==",
+        "dependencies": {
+          "OpenTK": "[4.3.0, 5.0.0)"
+        }
+      },
+      "OpenTK.Graphics": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "N1XXKrX+op6ORxkRoLa8mb/rMQVTW4YsJraneyU0RKqZ04PeOwcnX6BFb+mJISZnbtk+3SyYlWLjSsQjDdFbRg==",
+        "dependencies": {
+          "OpenTK.Core": "[4.3.0, 4.4.0)",
+          "OpenTK.Mathematics": "[4.3.0, 4.4.0)"
+        }
+      },
+      "OpenTK.Input": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "tvTQlC87bnNWN5BPOxCqSE2UJ6RKz/r342I25XBfeF/TNpw9Ad6upLdok8l8Nhess9LUItOPT6uBBdOlMEO0cA=="
+      },
+      "OpenTK.Mathematics": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "3yiHBaEeV6OVu7La6961Jx7xoP7dJoZXcRJaDqqPrEmmIuwUx2i4AQI60UpGmcrMJ11QhicmW6zjb8aZYySYrw=="
+      },
+      "OpenTK.OpenAL": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "zDzP8wsppS/5jwW8RUaac/bWOrZV5rB8Faejy5vLVE1ixWKclOEyO30ADOO3XZ+IWNKioX5wMhzKcy8kfsKKew==",
+        "dependencies": {
+          "OpenTK.Core": "[4.3.0, 4.4.0)",
+          "OpenTK.Mathematics": "[4.3.0, 4.4.0)"
+        }
+      },
+      "OpenTK.redist.glfw": {
+        "type": "Transitive",
+        "resolved": "3.3.0-pre20200830200122",
+        "contentHash": "EKE9pJCFHScbqOv/t0zG1h5Eh24nWr44SXYnpYtAWDhJhzAoUoI8TwDRXGvTGhDeCBp8ONEaVsq9xRC+OQIxQA=="
+      },
+      "OpenTK.Windowing.Common": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "HKKMHsv+eQrB3C3ySCcYS0yfKNZ/SM0v1upqBLEN5khs7IVPQ/wRwdR+OaPH/9v11pYtdNQL/XtkPVV0SC8jWA==",
+        "dependencies": {
+          "OpenTK.Core": "[4.3.0, 4.4.0)",
+          "OpenTK.Mathematics": "[4.3.0, 4.4.0)"
+        }
+      },
+      "OpenTK.Windowing.Desktop": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "pomhIDKQGGLn+5jAWCUsxAcHLOwO4/43pmcXA2xVKRcrvRQgY0QCUcroQRDwGam+8SinRBSTa0PNVNbDxZhoRA==",
+        "dependencies": {
+          "OpenTK.Core": "[4.3.0, 4.4.0)",
+          "OpenTK.Mathematics": "[4.3.0, 4.4.0)",
+          "OpenTK.Windowing.Common": "[4.3.0, 4.4.0)",
+          "OpenTK.Windowing.GraphicsLibraryFramework": "[4.3.0, 4.4.0)"
+        }
+      },
+      "OpenTK.Windowing.GraphicsLibraryFramework": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "R8H4ynmYUYuow/QNx4pnvPGR8Z6KUP54rVlnsH5tRkDYBU/m6bWmvFFvAA492rRyM5nt+6zAqGjv8GXY+8sylA==",
+        "dependencies": {
+          "OpenTK.Core": "[4.3.0, 4.4.0)",
+          "OpenTK.redist.glfw": "[3.3.0-pre20200830200122, 3.4.0-pre)"
+        }
+      },
+      "ShimSkiaSharp": {
+        "type": "Transitive",
+        "resolved": "3.2.1",
+        "contentHash": "WyMf+0aj5IJcHkG/t89WApGFg756oXB30ehu9kYu9hjdfS0snkXHoAiTJZqVlqyLOvzC6eA+nOQ2hI84g//5Pg=="
+      },
+      "SkiaSharp": {
+        "type": "Transitive",
+        "resolved": "3.119.2",
+        "contentHash": "nmy2dOFWPvQKMglfpjz8+/xQQcSrL9jzul3cUyzCJVSwrmSAw+6B1sEgU7jt6NZBptwGq2k/V0kjyu2GizMFtg==",
+        "dependencies": {
+          "SkiaSharp.NativeAssets.Win32": "3.119.2"
+        }
+      },
+      "SkiaSharp.HarfBuzz": {
+        "type": "Transitive",
+        "resolved": "3.119.2",
+        "contentHash": "/zabpNJYLU8k23N5JH92jGNNTrj/0CxbMbr/W/9aX9wzyTbypSKVo7/Pl6jVBZSqCI42vZAhv1akvV+SDiatzg==",
+        "dependencies": {
+          "HarfBuzzSharp": "8.3.1.3",
+          "SkiaSharp": "3.119.2"
+        }
+      },
+      "SkiaSharp.NativeAssets.Linux": {
+        "type": "Transitive",
+        "resolved": "3.119.2",
+        "contentHash": "9WzxSyG/s9Id506j0Ht+Bi5ucOpWKPzd1XXr9TD4fuCafHHy2swRSlbZtC3IDQAsvCH63OerkDJajj43uSv5og=="
+      },
+      "SkiaSharp.NativeAssets.Win32": {
+        "type": "Transitive",
+        "resolved": "3.119.2",
+        "contentHash": "uYe+da6+GXVgPKkCopzvIZ83DmC8SXXKeUAPrNcztJNsg0SjPQAxfKMOPZqmVjbzznrq/QUIjLUlJSZV/e0IPA=="
+      },
+      "SkiaSharp.Views.Desktop.Common": {
+        "type": "Transitive",
+        "resolved": "3.119.2",
+        "contentHash": "JDHJZw4aFzPQKsmrCPvsuXcW4Qc4psMqdmOLYPw1dt6iInsErOWTUj22EUyGLwd52WDdslQLmYsUMZ1lVS3u8A==",
+        "dependencies": {
+          "SkiaSharp": "3.119.2"
+        }
+      },
+      "SkiaSharp.Views.WPF": {
+        "type": "Transitive",
+        "resolved": "3.119.2",
+        "contentHash": "F2ZLVcyjg5steSaBIUkujX/tKgwe/vBUcrYp+sFGQMYv9Hn3OqsJhPqH9mvIHh7S/4tQDN9YcCbfDV1M3Ib5ug==",
+        "dependencies": {
+          "OpenTK": "4.3.0",
+          "OpenTK.GLWpfControl": "4.2.3",
+          "SkiaSharp": "3.119.2",
+          "SkiaSharp.Views.Desktop.Common": "3.119.2"
+        }
+      },
+      "Svg.Custom": {
+        "type": "Transitive",
+        "resolved": "3.2.1",
+        "contentHash": "Wu0+Il+SZfY5+AT25b2PMlSbBrzGIo/6vMMMdOK8jd25I9tdJJbxOFJNG87gFgo9UY9OmpIFzVobGOHzFdJYeQ==",
+        "dependencies": {
+          "ExCSS": "4.3.1"
+        }
+      },
+      "Svg.Model": {
+        "type": "Transitive",
+        "resolved": "3.2.1",
+        "contentHash": "N4yWlvqv1XWZ+VvI29lT4HkEgtiP3rS/poMfWiVzz6Ao/3IjQCfmo2qrKphq77IqTdMYyh7wGDknMId7YrQY5Q==",
+        "dependencies": {
+          "ShimSkiaSharp": "3.2.1",
+          "Svg.Custom": "3.2.1"
+        }
+      },
+      "Svg.Skia": {
+        "type": "Transitive",
+        "resolved": "3.2.1",
+        "contentHash": "pRJtMOc2hTcnxSu7cx6lf806S+2VrQ0eqUpGMBUQQ/pIIvzrtn0+lUjdABTvjr5rsdQF9OxE+r9npq2+3c6T4A==",
+        "dependencies": {
+          "SkiaSharp": "2.88.9",
+          "Svg.Custom": "3.2.1",
+          "Svg.Model": "3.2.1"
+        }
+      },
+      "Topten.RichTextKit": {
+        "type": "Transitive",
+        "resolved": "0.4.167",
+        "contentHash": "fARM2vAZ4ZFAcNFqRLVrjQNjXzk/2yWWXTmTZ/aYUdXJE6ZT2616v3Ojux4cVcKPx2M930sY3plLKeWppGsJaA==",
+        "dependencies": {
+          "HarfBuzzSharp.NativeAssets.Linux": "2.8.2.3",
+          "SkiaSharp": "2.88.7",
+          "SkiaSharp.HarfBuzz": "2.88.7",
+          "SkiaSharp.NativeAssets.Linux": "2.88.7"
+        }
+      }
+    }
+  }
+}
 ``````
 
 <a id="file-src-ogcdemo-core-packages-lock-json"></a>
