@@ -38,7 +38,12 @@ public static class OgcLayers
         if (capabilities.Root?.Attribute("version")?.Value != o.Version) throw new DemoException("Service capabilities version differs from configuration.");
         if (o.Kind == "WMTS")
         {
-            using var stream = new MemoryStream(bytes);
+            // BruTile 6 also considers auxiliary ResourceURL entries (for example GeoServer
+            // TileJSON). Pass only tile templates for the requested image format.
+            foreach (var resource in capabilities.Descendants().Where(e => e.Name.LocalName == "ResourceURL").ToArray())
+                if ((string?)resource.Attribute("resourceType") != "tile" || (string?)resource.Attribute("format") != o.Format)
+                    resource.Remove();
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(capabilities.ToString()));
             var sources = WmtsCapabilitiesParser.Parse(stream);
             var source = sources.FirstOrDefault(s => s.Schema is WmtsTileSchema w && w.Layer == o.Layer && w.TileMatrixSet == o.MatrixSet && w.Style == o.Style && w.Format == o.Format)
                 ?? throw new DemoException("WMTS layer/style/format/matrix-set combination was not advertised.");

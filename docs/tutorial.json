@@ -102,5 +102,51 @@
       "scripts/Test-Desktop.ps1",
       "src/OgcDemo.Wpf/DesktopSmoke.cs"
     ]
+  },
+  {
+    "title": "12. AIS and ADS-B traffic viewer",
+    "template": "docs/templates/12-traffic-viewer.md",
+    "output": "docs/chapters/12-traffic-viewer.md",
+    "sources": [
+      "src/TrafficDemo.Wpf/TrafficDemo.Wpf.csproj",
+      "src/TrafficDemo.Wpf/appsettings.json",
+      "src/TrafficDemo.Wpf/Options.cs",
+      "src/TrafficDemo.Wpf/App.xaml",
+      "src/TrafficDemo.Wpf/App.xaml.cs",
+      "src/TrafficDemo.Wpf/MainWindow.xaml",
+      "src/TrafficDemo.Wpf/MainWindow.xaml.cs"
+    ]
+  },
+  {
+    "title": "13. Bounded traffic pipeline and rendering",
+    "template": "docs/templates/13-traffic-data.md",
+    "output": "docs/chapters/13-traffic-data.md",
+    "sources": [
+      "src/TrafficDemo.Core/TrafficDemo.Core.csproj",
+      "src/TrafficDemo.Core/Models.cs",
+      "src/TrafficDemo.Core/Simulation.cs",
+      "src/TrafficDemo.Core/Tracking.cs",
+      "src/TrafficDemo.Core/Rendering.cs",
+      "src/TrafficDemo.Wpf/FilterEditor.cs",
+      "src/TrafficDemo.Wpf/MainViewModel.cs"
+    ]
+  },
+  {
+    "title": "14. Traffic performance and validation",
+    "template": "docs/templates/14-traffic-performance.md",
+    "output": "docs/chapters/14-traffic-performance.md",
+    "sources": [
+      "src/TrafficDemo.Core/Metrics.cs",
+      "src/TrafficDemo.Wpf/BasemapHandler.cs",
+      "src/TrafficDemo.Wpf/MeasuredRenderer.cs",
+      "src/TrafficDemo.Wpf/DesktopRun.cs",
+      "tests/TrafficDemo.Tests/TrafficDemo.Tests.csproj",
+      "tests/TrafficDemo.Tests/TrafficTests.cs",
+      "scripts/Benchmark-Traffic.ps1",
+      "scripts/Test-TrafficDesktop.ps1",
+      "scripts/Ensure-TrafficBasemap.ps1",
+      "scripts/ensure-traffic-basemap.sh",
+      "scripts/Start-TrafficDemo.ps1"
+    ]
   }
 ]

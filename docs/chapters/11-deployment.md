@@ -59,8 +59,10 @@ function Run-DotNet { & dotnet @args | Out-Host; if ($LASTEXITCODE -ne 0) { thro
 Run-DotNet restore OgcDemo.slnx --configfile $NuGetConfig --locked-mode
 Run-DotNet build OgcDemo.slnx -c Release --no-restore
 Run-DotNet test tests/OgcDemo.Tests -c Release --no-build --no-restore --logger 'trx;LogFileName=tests.trx' --results-directory .artifacts/tests
+Run-DotNet test tests/TrafficDemo.Tests -c Release --no-build --no-restore --logger 'trx;LogFileName=traffic-tests.trx' --results-directory .artifacts/tests
 Run-DotNet run --project tools/ManualBuilder -c Release --no-build --no-restore -- --check
 if ($Publish) {
+    Run-DotNet publish src/TrafficDemo.Wpf -c Release -r win-x64 --self-contained false --no-restore -o .artifacts/traffic-publish
     Run-DotNet publish src/OgcDemo.Wpf -c Release -r win-x64 --self-contained false --no-restore -o .artifacts/publish
 }
 ``````

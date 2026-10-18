@@ -48,3 +48,16 @@ dotnet run --project tools/ManualBuilder --no-restore -- --check
 ```
 
 After code changes regenerate the guide, build, and run relevant tests. Describe implemented behavior separately from extension proposals. Use existing configuration models rather than inventing unrelated settings. If a service fails, inspect its advertised capabilities and the supported subset before changing coordinate math.
+
+## Traffic Lab extension
+
+`TrafficDemo.Core` owns decoded synthetic feeds, bounded latest-report ingestion,
+tracking, ring histories, immutable snapshots and spatial indexes. `TrafficDemo.Wpf`
+owns UI publication, selection/following, OGC basemap connections and completed-render
+instrumentation. Read lessons 12–14 before changing the pipeline. Preserve distinct
+input/display filter semantics, one pending UI snapshot, worker ownership and immutable
+published geometry. The 10k population is a validation target, never a hard cap.
+Use native Windows benchmark evidence for performance claims; core tests and Linux
+cross-compilation do not demonstrate WPF rendering. Benchmark JSON distinguishes
+functional completion, performance targets and evaluated versus unevaluated soaks.
+The local OSM server is reused; do not reprovision its data or volumes.

@@ -44,6 +44,20 @@ public class ProtocolTests
         Assert.Equal(OgcFixture.Png,bytes);
         o.MatrixSet="not-advertised"; await Assert.ThrowsAsync<DemoException>(()=>OgcLayers.ConnectAsync(o,t,default));
     }
+    [Fact] public async Task WmtsNeverRequestsTileJsonOrFeatureInfoAsAnImage()
+    {
+        using var f = new OgcFixture();
+        f.ExtraWmtsResources = $"<ResourceURL format=\"application/json\" resourceType=\"TileJSON\" template=\"{f.Url}?request=GetTileJSON\"/>" +
+            $"<ResourceURL format=\"text/plain\" resourceType=\"FeatureInfo\" template=\"{f.Url}?request=GetFeatureInfo\"/>" +
+            $"<ResourceURL format=\"image/jpeg\" resourceType=\"tile\" template=\"{f.Url}?request=WrongFormat\"/>";
+        var o = Options(f, "WMTS", "1.0.0"); using var transport = Transport(o);
+        using var connection = await OgcLayers.ConnectAsync(o, transport, default);
+        var source = (BruTile.IHttpTileSource)((TileLayer)connection.Layer).TileSource;
+        using var http = new HttpClient();
+        for (var i = 0; i < 32; i++) Assert.Equal(OgcFixture.Png, await source.GetTileAsync(http, new TileInfo { Index = new TileIndex(0, 0, 0) }));
+        Assert.Equal(32, f.Requests.Count(r => r.Request == "GetTile"));
+        Assert.DoesNotContain(f.Requests, r => r.Request is "GetTileJSON" or "GetFeatureInfo" or "WrongFormat");
+    }
     [Theory] [InlineData("WMS","1.3.0")] [InlineData("WMTS","1.0.0")] [InlineData("WFS","2.0.0")]
     public async Task AuthenticationCoversDiscoveryAndSubsequentRequests(string kind,string version)
     {

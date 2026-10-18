@@ -32,3 +32,14 @@ Primary references:
 - [GeoJSON RFC 7946](https://www.rfc-editor.org/rfc/rfc7946)
 
 External references are supplementary. Core instructions, code, fixtures, configuration, and expected results are included locally for air-gapped use.
+
+## Traffic Lab contracts
+
+`ITrackFeed` supplies cancellable decoded `TrackReport` values. `TrafficEngine` owns
+background simulation/tracking and emits immutable `TrafficSnapshot` values.
+`SnapshotBuilder` creates read-only `RenderSnapshot` geometry/indexes.
+`IndexedTrafficLayer` provides viewport queries to the standard Mapsui renderer.
+`MeasuredRenderer` forwards renderer operations and measures completed drawing.
+`TrackFilter` is shared by separate admission and display paths. See
+[lesson 13](chapters/13-traffic-data.md) for ownership and ordering rules and
+[lesson 14](chapters/14-traffic-performance.md) for JSON/CSV evidence semantics.

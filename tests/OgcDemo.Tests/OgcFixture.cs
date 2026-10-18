@@ -16,6 +16,7 @@ public sealed class OgcFixture : IDisposable
     public string Crs { get; set; } = "EPSG:3857";
     public string Geometry { get; set; } = "<gml:Point srsName=\"EPSG:3857\"><gml:pos>100 200</gml:pos></gml:Point>";
     public string? Failure { get; set; }
+    public string ExtraWmtsResources { get; set; } = "";
     public static readonly byte[] Png = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGOQzFvwHwAD8gInMMAcvAAAAABJRU5ErkJggg==");
     public OgcFixture()
     {
@@ -100,6 +101,7 @@ public sealed class OgcFixture : IDisposable
             <Style isDefault="true"><ows:Identifier>default</ows:Identifier></Style><Format>image/png</Format>
             <TileMatrixSetLink><TileMatrixSet>WebMercatorQuad</TileMatrixSet></TileMatrixSetLink>
             <ResourceURL format="image/png" resourceType="tile" template="{{Url}}?request=GetTile&amp;TileMatrix={TileMatrix}&amp;TileRow={TileRow}&amp;TileCol={TileCol}"/>
+            {{ExtraWmtsResources}}
           </Layer><TileMatrixSet><ows:Identifier>WebMercatorQuad</ows:Identifier><ows:SupportedCRS>{{Crs}}</ows:SupportedCRS>
             <TileMatrix><ows:Identifier>0</ows:Identifier><ScaleDenominator>559082264.0287178</ScaleDenominator><TopLeftCorner>-20037508.3427892 20037508.3427892</TopLeftCorner><TileWidth>256</TileWidth><TileHeight>256</TileHeight><MatrixWidth>1</MatrixWidth><MatrixHeight>1</MatrixHeight></TileMatrix>
           </TileMatrixSet></Contents>

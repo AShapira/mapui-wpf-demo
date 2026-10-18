@@ -4,6 +4,25 @@ A documented .NET 10 WPF GIS application for an air-gapped Windows workstation w
 
 **Start reading:** [Complete build guide](docs/BUILD-GUIDE.md). For shorter reading sessions use [lesson 01](docs/chapters/01-foundations.md). Local coding models should start with [LLM context](LLM_CONTEXT.md).
 
+## AIS / ADS-B Traffic Lab
+
+A separate [TrafficDemo.Wpf](src/TrafficDemo.Wpf/TrafficDemo.Wpf.csproj) app simulates
+configurable ship and aircraft populations, draws directional symbols and bounded
+traces, supports selection/following and separate input/display filters, and measures
+Mapsui rendering under sustained load. The validation target is 10,000 moving objects;
+larger populations are allowed with a warning. It uses the existing local OSM
+GeoServer at port 8602, with overlay-only mode for comparison.
+
+```powershell
+dotnet run --project src/TrafficDemo.Wpf -c Release
+```
+
+Configure the internal NuGet feed and restore as described below first. For published
+launch, native smoke checks and reproducible benchmarks, start with the
+[traffic viewer guide](docs/chapters/12-traffic-viewer.md),
+[pipeline and memory design](docs/chapters/13-traffic-data.md), and
+[performance guide](docs/chapters/14-traffic-performance.md).
+
 ## Hello World: just a map
 
 For the smallest example, open [HelloMap.Wpf](src/HelloMap.Wpf/HelloMap.Wpf.csproj). It is a separate WPF app with one map control, one WMS basemap, and one in-memory polyline layer. Four white circles mark the line's vertices. All map setup is in [MainWindow.xaml.cs](src/HelloMap.Wpf/MainWindow.xaml.cs); there is no view model, DI, or configuration framework. See the [Hello World README](src/HelloMap.Wpf/README.md) for setup and an explanation of its NuGet dependencies.

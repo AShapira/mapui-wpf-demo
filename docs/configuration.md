@@ -40,3 +40,10 @@ GeoJSON: FeatureCollection, RFC 7946 longitude/latitude, no legacy `crs` member,
 WFS: HTTP GET, GML 3.1/3.2, 2D Point/LineString/Polygon (including holes), MultiPoint, MultiLineString/MultiCurve containing lines, and MultiPolygon/MultiSurface containing polygons. Curved segments, surface patches, complex nested attributes, remote XLinks, GML 2 `coordinates`, and 3D are unsupported. Only scalar feature properties are displayed. A layer at the feature cap is explicitly marked incomplete; the core does not silently paginate or claim complete coverage.
 
 Logs: `%LOCALAPPDATA%\OgcDemo\logs\ogc-demo-YYYYMMDD.log`, UTC timestamps. Daily filenames are rotation, not retention; see the deployment lesson. The logger omits exception payloads; callers must still use authored messages, never sensitive state.
+
+## Traffic viewer configuration
+
+The independent traffic app uses its own `Traffic` section and private
+`appsettings.local.json` overlay. See [lesson 12](chapters/12-traffic-viewer.md) for all
+simulation, history, filtering and basemap defaults. Only its OGC connection explicitly
+permits loopback HTTP; the existing full OGC application's HTTPS validation is unchanged.
